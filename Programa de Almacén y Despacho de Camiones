@@ -1,3 +1,8 @@
+import os
+
+
+
+
 class Stack:
     def __init__(self):
         self.stack = []
@@ -31,16 +36,19 @@ def transporte_cajas():
     lista_camiones = []
     despacho_cajas = []
 
+    def limpiar_pantalla():
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def almacenar_cajas_pila():
         print('--- ALMACÉN DE CAJAS ---')
         print('El nombre de la caja puede ser cualquiera (ej. Televisor, Caja-10, Ropa).')
         while True:
-            nombre_caja = input('Ingresa el nombre de la caja: ').strip()
+            nombre_caja = input('Ingresa el nombre de la caja: ').strip(" ./,:;'[]!@#$%^&*()_+=<>")
             if not nombre_caja:
                 print('El nombre no puede estar vacío.')
                 continue
 
-            destino_camion = input('Ingresa el nombre del camión al que pertenece (ej. Camion-A o solo A): ').strip()
+            destino_camion = input('Ingresa el nombre del camión al que pertenece (ej. Camion-A o solo A): ').strip("./,:;'[]!@#$%^&*()_+=<>")
             if not destino_camion.startswith('Camion-'):
                 destino_camion = 'Camion-' + destino_camion
 
@@ -60,6 +68,7 @@ def transporte_cajas():
                 continue
             elif otra == 'No':
                 print('Cajas almacenadas con éxito.')
+                limpiar_pantalla()
                 break
             else:
                 print('Error. Responde con Si o No')
@@ -68,7 +77,7 @@ def transporte_cajas():
         print('--- LLEGADA DE CAMIONES ---')
         print('Ejemplo: J (para Camion-J)')
         while True:
-            nombre_camion = input('Ingresa el nombre del camión: ').strip()
+            nombre_camion = input('Ingresa el nombre del camión: ').strip(" ./,:;'[]!@#$%^&*()_+=<>")
             if not nombre_camion.startswith('Camion-'):
                             nombre_camion = 'Camion-' + nombre_camion
             
@@ -87,6 +96,7 @@ def transporte_cajas():
                 continue
             elif otra == 'No':
                 print('Camiones enlistados con éxito.')
+                limpiar_pantalla()
                 break
             else:
                 print('Error. Responde con Si o No')
@@ -119,6 +129,7 @@ def transporte_cajas():
 
             elif despachar == 'No':
                 print('Operación de despacho de cajas finalizada.')
+                limpiar_pantalla()
                 break
             else:
                 print('Error. Responde con Si o No')
@@ -138,6 +149,7 @@ def transporte_cajas():
                     print(f'Se ha enviado el camión {camion_enviado} y su cargamento era: {cajas_camion}')
             elif despachar == 'No':
                 print('Despachos finalizados.')
+                limpiar_pantalla()
                 break
             else:
                 print('Error. Responde con Si o No')
@@ -155,6 +167,7 @@ def transporte_cajas():
         print('\n')
 
     while True:
+        
         print("==================================================")
         print('SISTEMA DE DESPACHO Y ALMACÉN')
         print("==================================================")
