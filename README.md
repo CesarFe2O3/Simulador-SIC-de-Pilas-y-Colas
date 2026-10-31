@@ -73,8 +73,6 @@ python --version
    python3 Simulador_CLI_de_Pilas_y_Colas_02.py
    ```
 
-> 💡 **Consejo:** si tu archivo tiene espacios o puntos en el nombre (por ejemplo `Simulador CLI de Pilas y Colas.02.py`), enciérralo entre comillas al ejecutarlo o renómbralo para evitar problemas.
-
 ---
 
 ## 🧠 Cómo funciona la simulación
