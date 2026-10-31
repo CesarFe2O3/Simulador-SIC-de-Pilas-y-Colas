@@ -1,0 +1,187 @@
+class Stack:
+    def __init__(self):
+        self.stack = []
+    def is_empty(self):
+        return True if len(self.stack)==0 else False
+    def push(self, item):
+        self.stack.append(item)
+    def pop(self):
+        return None if self.is_empty() else self.stack.pop()
+    def peek(self):
+        return None if self.is_empty() else self.stack[-1]
+
+class Queue:
+    def __init__(self):
+        self.queue = []
+    def is_empty(self):
+        return True if len(self.queue)==0 else False
+    def enqueue(self,item):
+        self.queue.append(item)
+    def dequeue(self):
+        return None if self.is_empty() else self.queue.pop(0)
+    def size(self):
+        return len(self.queue)
+
+
+def transporte_cajas():
+    cajas = Stack()
+    lista_cajas = []  # Almacenará diccionarios con la info de cada caja (Base -> Cima)
+
+    camiones = Queue()
+    lista_camiones = []
+    despacho_cajas = []
+
+    def almacenar_cajas_pila():
+        print('--- ALMACÉN DE CAJAS ---')
+        print('El nombre de la caja puede ser cualquiera (ej. Televisor, Caja-10, Ropa).')
+        while True:
+            nombre_caja = input('Ingresa el nombre de la caja: ').strip()
+            if not nombre_caja:
+                print('El nombre no puede estar vacío.')
+                continue
+
+            destino_camion = input('Ingresa el nombre del camión al que pertenece (ej. Camion-A o solo A): ').strip()
+            if not destino_camion.startswith('Camion-'):
+                destino_camion = 'Camion-' + destino_camion
+
+            # Verificamos si ya existe una caja con ese mismo nombre exacto
+            if any(c['nombre'] == nombre_caja for c in lista_cajas):
+                print('Ya existe una caja con ese nombre en el almacén. Usa otro nombre.')
+                continue
+
+            caja_info = {'nombre': nombre_caja, 'camion': destino_camion}
+
+            lista_cajas.append(caja_info)
+            cajas.push(caja_info)
+            print(f'La caja "{nombre_caja}" con destino al {destino_camion} ha sido apilada con éxito.')
+
+            otra = input('Quieres almacenar otra caja? (Responde Si o No): ').strip().capitalize()
+            if otra == 'Si':
+                continue
+            elif otra == 'No':
+                print('Cajas almacenadas con éxito.')
+                break
+            else:
+                print('Error. Responde con Si o No')
+
+    def camion_cola():
+        print('--- LLEGADA DE CAMIONES ---')
+        print('Ejemplo: J (para Camion-J)')
+        while True:
+            nombre_camion = input('Ingresa el nombre del camión: ').strip()
+            if not nombre_camion.startswith('Camion-'):
+                            nombre_camion = 'Camion-' + nombre_camion
+            
+
+            if nombre_camion in lista_camiones:
+                print('Ya este camión está en cola. Enlista otro camión.')
+                continue
+
+            lista_camiones.append( nombre_camion)
+            camiones.enqueue( nombre_camion)
+            despacho_cajas.append([])
+            print(f'El camión { nombre_camion} está en la fila.')
+
+            otra = input('Quieres enlistar otro camión? (Responde Si o No): ').strip().capitalize()
+            if otra == 'Si':
+                continue
+            elif otra == 'No':
+                print('Camiones enlistados con éxito.')
+                break
+            else:
+                print('Error. Responde con Si o No')
+
+    def retiro_cajas_pila():
+        print('--- GUARDAR CAJAS EN CAMIONES ---')
+        print('Se evaluará si el camión correspondiente a la caja en la cima ya se encuentra en la fila.')
+
+        while True:
+            if cajas.is_empty():
+                print('No hay cajas en el almacén. Reciba cajas primero.')
+                break
+
+            despachar = input('Quieres despachar la caja de la cima a su camión? (Responde Si o No): ').strip().capitalize()
+            if despachar == 'Si':
+                caja_actual = cajas.peek() # Diccionario con 'nombre' y 'camion'
+                camion_destino = caja_actual['camion']
+
+                # Evaluamos si el camión destino está actualmente en la fila
+                if camion_destino in lista_camiones:
+                    caja_despachada = cajas.pop()
+                    lista_cajas.remove(caja_despachada) # Sincronizamos la lista
+
+                    idx = lista_camiones.index(camion_destino)
+                    despacho_cajas[idx].append(caja_despachada['nombre'])
+                    print(f'¡Éxito! La caja "{caja_despachada["nombre"]}" fue enviada a su camión: {camion_destino}')
+                else:
+                    print(f'AVISO: El camión "{camion_destino}" (destino de la caja "{caja_actual["nombre"]}") AÚN NO HA LLEGADO a la fila.')
+                    print('Debe registrar o hacer llegar este camión a la cola antes de poder despacharle su caja.')
+
+            elif despachar == 'No':
+                print('Operación de despacho de cajas finalizada.')
+                break
+            else:
+                print('Error. Responde con Si o No')
+
+    def despacho_camion():
+        print('--- DESPACHO DE CAMIONES ---')
+
+        while True:
+            despachar = input('Quieres despachar el camión al principio de la fila? (Responde Si o No): ').strip().capitalize()
+            if despachar == 'Si':
+                if camiones.is_empty():
+                    print('No hay camiones en cola para despachar.')
+                else:
+                    camion_enviado = camiones.dequeue()
+                    lista_camiones.pop(0)
+                    cajas_camion = despacho_cajas.pop(0)
+                    print(f'Se ha enviado el camión {camion_enviado} y su cargamento era: {cajas_camion}')
+            elif despachar == 'No':
+                print('Despachos finalizados.')
+                break
+            else:
+                print('Error. Responde con Si o No')
+
+    def estado_cajas_camiones():
+        print('--- ESTADO DEL SISTEMA ---')
+        print('Cajas apiladas (Cima -> Base):')
+        if not lista_cajas:
+            print('  [Almacén vacío]')
+        else:
+            for c in reversed(lista_cajas):
+                print(f"  - Caja: '{c['nombre']}' (Destino: {c['camion']})")
+
+        print('Fila de camiones (Frente -> Fin):', lista_camiones)
+        print('\n')
+
+    while True:
+        print("==================================================")
+        print('SISTEMA DE DESPACHO Y ALMACÉN')
+        print("==================================================")
+        print('1. Almacen de cajas (Apilar cajas)')
+        print('2. Llegada de camion al almacen (Llega el camion a la fila)')
+        print('3. Guardar cajas a transportar (Retirar caja de la cima)')
+        print('4. Enviar camion (Despachar primer camion)')
+        print('5. Ver estado del almacen y los camiones')
+        print('6. Salir del programa')
+        print('--------------------------------------------------')
+        try:
+            select = int(input('Seleccione una opción (1-6): '))
+            match select:
+                case 1: almacenar_cajas_pila()
+                case 2: camion_cola()
+                case 3: retiro_cajas_pila()
+                case 4: despacho_camion()
+                case 5: estado_cajas_camiones()
+                case 6:
+                    print('Gracias por utilizar el programa. Hasta luego!')
+                    break
+                case _:
+                    print('Esa opción no se encuentra dentro del programa.\n')
+
+        except ValueError:
+            print('Ingrese un número válido que coincida con las opciones.\n')
+            continue
+        print('\n')
+
+transporte_cajas()
