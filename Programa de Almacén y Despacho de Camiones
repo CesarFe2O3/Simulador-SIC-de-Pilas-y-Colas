@@ -1,7 +1,7 @@
+from colorama import init, Fore, Back, Style
 import os
 
-
-
+init(autoreset=True)
 
 class Stack:
     def __init__(self):
@@ -28,7 +28,8 @@ class Queue:
         return len(self.queue)
 
 
-def transporte_cajas():
+def programa_transporte_cajas():
+    
     cajas = Stack()
     lista_cajas = []  # Almacenará diccionarios con la info de cada caja (Base -> Cima)
 
@@ -36,82 +37,123 @@ def transporte_cajas():
     lista_camiones = []
     despacho_cajas = []
 
+
+
+    def si_no(respuesta):
+        if respuesta in ['si','s','yes','y','1','Si','S']:
+            return True
+        if respuesta in ['no','not','n','0','No','Not','N']:
+            return False
+
     def limpiar_pantalla():
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def almacenar_cajas_pila():
-        print('--- ALMACÉN DE CAJAS ---')
-        print('El nombre de la caja puede ser cualquiera (ej. Televisor, Caja-10, Ropa).')
+        limpiar_pantalla()
+        print(Fore.CYAN +'--- ALMACÉN DE CAJAS ---')
+        print(Fore.GREEN +'El nombre de la caja puede ser cualquiera (ej. Televisor, Caja-10, Ropa).')
         while True:
-            nombre_caja = input('Ingresa el nombre de la caja: ').strip(" ./,:;'[]!@#$%^&*()_+=<>")
+            nombre_caja = input('Ingresa el nombre de la caja: ').strip(" ./,:;'[]!@#$%^&*()_+=<>").capitalize()
             if not nombre_caja:
-                print('El nombre no puede estar vacío.')
+                print(Fore.RED + 'El nombre no puede estar vacío.')
                 continue
-
-            destino_camion = input('Ingresa el nombre del camión al que pertenece (ej. Camion-A o solo A): ').strip("./,:;'[]!@#$%^&*()_+=<>")
+            if  not nombre_caja.startswith('Caja-'):
+                nombre_caja = 'Caja-' + nombre_caja
+            destino_camion = input('Ingresa el nombre del camión al que pertenece (ej. Camion-A o solo A): ').strip(" ./,:;'[]!@#$%^&*()_+=<>").capitalize()
+            if not destino_camion:
+                print(Fore.RED + 'El nombre no puede estar vacío.')
+                continue
             if not destino_camion.startswith('Camion-'):
                 destino_camion = 'Camion-' + destino_camion
 
             # Verificamos si ya existe una caja con ese mismo nombre exacto
             if any(c['nombre'] == nombre_caja for c in lista_cajas):
-                print('Ya existe una caja con ese nombre en el almacén. Usa otro nombre.')
-                continue
+                print(Fore.RED + 'Ya existe una caja con ese nombre en el almacén. Usa otro nombre.')
+                otra = input('Quieres almacenar otra caja? (Responde Si o No): ').strip()
+                if si_no(otra) == True:
+                    continue
+                elif si_no(otra) == False:
+                    limpiar_pantalla()
+                    print(Fore.YELLOW + 'Cajas almacenadas con éxito.')
+                    break
+                
 
             caja_info = {'nombre': nombre_caja, 'camion': destino_camion}
 
             lista_cajas.append(caja_info)
             cajas.push(caja_info)
-            print(f'La caja "{nombre_caja}" con destino al {destino_camion} ha sido apilada con éxito.')
+            print(Fore.YELLOW + f'La caja "{nombre_caja}" con destino al {destino_camion} ha sido apilada con éxito.')
 
-            otra = input('Quieres almacenar otra caja? (Responde Si o No): ').strip().capitalize()
-            if otra == 'Si':
+            otra = input('Quieres almacenar otra caja? (Responde Si o No): ').strip()
+            if si_no(otra) == True:
                 continue
-            elif otra == 'No':
-                print('Cajas almacenadas con éxito.')
+            elif si_no(otra) == False:
                 limpiar_pantalla()
+                print(Fore.YELLOW + 'Cajas almacenadas con éxito.')
                 break
             else:
-                print('Error. Responde con Si o No')
-
+                limpiar_pantalla()
+                print(Fore.RED + 'Error. Responde con Si o No')
+                otra = input('Quieres almacenar otra caja? (Responde Si o No): ').strip()
     def camion_cola():
-        print('--- LLEGADA DE CAMIONES ---')
-        print('Ejemplo: J (para Camion-J)')
+        limpiar_pantalla()
+        print(Fore.CYAN + '--- LLEGADA DE CAMIONES ---')
+        print(Fore.YELLOW + 'Ejemplo: J (para Camion-J)')
         while True:
-            nombre_camion = input('Ingresa el nombre del camión: ').strip(" ./,:;'[]!@#$%^&*()_+=<>")
+            nombre_camion = input('Ingresa el nombre del camión: ').strip(" ./,:;'[]!@#$%^&*()_+=<>").capitalize()
+            if not nombre_camion:
+                print(Fore.RED + 'El nombre no puede estar vacío.')
+                continue
             if not nombre_camion.startswith('Camion-'):
                             nombre_camion = 'Camion-' + nombre_camion
             
 
             if nombre_camion in lista_camiones:
-                print('Ya este camión está en cola. Enlista otro camión.')
-                continue
+                print(Fore.RED + 'Ya este camión está en cola. Enlista otro camión.')
+                otra = input('Quieres enlistar otro camión? (Responde Si o No): ').strip()
+                if si_no(otra)==True:
+                    continue
+                elif si_no(otra) == False:
+                    limpiar_pantalla()
+                    print(Fore.YELLOW + 'Camiones enlistados con éxito.')
+                    break
+                
 
             lista_camiones.append( nombre_camion)
             camiones.enqueue( nombre_camion)
             despacho_cajas.append([])
-            print(f'El camión { nombre_camion} está en la fila.')
+            print(Fore.YELLOW + f'El camión { nombre_camion} está en la fila.')
 
-            otra = input('Quieres enlistar otro camión? (Responde Si o No): ').strip().capitalize()
-            if otra == 'Si':
+            otra = input('Quieres enlistar otro camión? (Responde Si o No): ').strip()
+            if si_no(otra)==True:
                 continue
-            elif otra == 'No':
-                print('Camiones enlistados con éxito.')
+            elif si_no(otra) == False:
                 limpiar_pantalla()
+                print(Fore.YELLOW + 'Camiones enlistados con éxito.')
                 break
             else:
-                print('Error. Responde con Si o No')
+                print(Fore.RED + 'Error. Responde con Si o No')
+                otra = input('Quieres enlistar otro camión? (Responde Si o No): ').strip()
+                if si_no(otra)==True:
+                    continue
+                elif si_no(otra) == False:
+                    limpiar_pantalla()
+                    print(Fore.YELLOW + 'Camiones enlistados con éxito.')
+                    break
 
     def retiro_cajas_pila():
-        print('--- GUARDAR CAJAS EN CAMIONES ---')
-        print('Se evaluará si el camión correspondiente a la caja en la cima ya se encuentra en la fila.')
-
+        limpiar_pantalla()
+        print(Fore.CYAN + '--- GUARDAR CAJAS EN CAMIONES ---')
+        print(Fore.GREEN + 'Se evaluará si el camión correspondiente a la caja en la cima ya se encuentra en la fila.')
+        
         while True:
-            if cajas.is_empty():
-                print('No hay cajas en el almacén. Reciba cajas primero.')
+            if cajas.is_empty():  
+                limpiar_pantalla()   
+                print(Fore.RED + 'No hay mas cajas en el almacén.')           
                 break
 
-            despachar = input('Quieres despachar la caja de la cima a su camión? (Responde Si o No): ').strip().capitalize()
-            if despachar == 'Si':
+            despachar = input('Quieres despachar la caja de la cima a su camión? (Responde Si o No): ').strip()
+            if si_no(despachar) == True:
                 caja_actual = cajas.peek() # Diccionario con 'nombre' y 'camion'
                 camion_destino = caja_actual['camion']
 
@@ -122,64 +164,90 @@ def transporte_cajas():
 
                     idx = lista_camiones.index(camion_destino)
                     despacho_cajas[idx].append(caja_despachada['nombre'])
-                    print(f'¡Éxito! La caja "{caja_despachada["nombre"]}" fue enviada a su camión: {camion_destino}')
+                    print(Fore.YELLOW + f'¡Éxito! La caja "{caja_despachada["nombre"]}" fue enviada a su camión: {camion_destino}')
+                    if cajas.is_empty(): 
+                        limpiar_pantalla()
+                        print(Fore.YELLOW + f'¡Éxito! La caja "{caja_despachada["nombre"]}" fue enviada a su camión: {camion_destino}')    
+                        print(Fore.RED + 'No hay mas cajas en el almacén.')           
+                        break
                 else:
-                    print(f'AVISO: El camión "{camion_destino}" (destino de la caja "{caja_actual["nombre"]}") AÚN NO HA LLEGADO a la fila.')
-                    print('Debe registrar o hacer llegar este camión a la cola antes de poder despacharle su caja.')
+                    print(Fore.RED + f'AVISO: El camión "{camion_destino}" (destino de la caja "{caja_actual["nombre"]}") AÚN NO HA LLEGADO a la fila.')
+                    print(Fore.RED + 'Debe registrar o hacer llegar este camión a la cola antes de poder despacharle su caja.')
 
-            elif despachar == 'No':
-                print('Operación de despacho de cajas finalizada.')
+            elif si_no(despachar) == False:
                 limpiar_pantalla()
+                print(Fore.YELLOW + 'Operación de despacho de cajas finalizada.')
                 break
             else:
-                print('Error. Responde con Si o No')
+                print(Fore.RED + 'Error. Responde con Si o No')
 
     def despacho_camion():
-        print('--- DESPACHO DE CAMIONES ---')
+        limpiar_pantalla()
+        print(Fore.CYAN + '--- DESPACHO DE CAMIONES ---')
 
         while True:
-            despachar = input('Quieres despachar el camión al principio de la fila? (Responde Si o No): ').strip().capitalize()
-            if despachar == 'Si':
+            despachar = input('Quieres despachar el camión al principio de la fila? (Responde Si o No): ').strip()
+            if si_no(despachar) == True:
                 if camiones.is_empty():
-                    print('No hay camiones en cola para despachar.')
+                    limpiar_pantalla()
+                    print(Fore.RED + 'No hay camiones en cola para despachar.')
+                    break
                 else:
                     camion_enviado = camiones.dequeue()
                     lista_camiones.pop(0)
                     cajas_camion = despacho_cajas.pop(0)
-                    print(f'Se ha enviado el camión {camion_enviado} y su cargamento era: {cajas_camion}')
-            elif despachar == 'No':
-                print('Despachos finalizados.')
+                    print(Fore.YELLOW + f'Se ha enviado el camión {camion_enviado} y su cargamento era: {cajas_camion}')
+                    if camiones.is_empty():
+                        limpiar_pantalla()
+                        print(Fore.YELLOW + f'Se ha enviado el camión {camion_enviado} y su cargamento era: {cajas_camion}')
+                        print(Fore.YELLOW +'Despachos finalizados.')
+                        print(Fore.RED + 'No hay camiones en cola para despachar.')
+                        break
+            elif si_no(despachar) == False:
                 limpiar_pantalla()
+                print(Fore.YELLOW +'Despachos finalizados.')
+                if camiones.is_empty():
+                    print(Fore.RED + 'No hay camiones en cola para despachar.')
                 break
             else:
-                print('Error. Responde con Si o No')
+                print(Fore.RED + 'Error. Responde con Si o No')
 
     def estado_cajas_camiones():
-        print('--- ESTADO DEL SISTEMA ---')
-        print('Cajas apiladas (Cima -> Base):')
-        if not lista_cajas:
-            print('  [Almacén vacío]')
-        else:
-            for c in reversed(lista_cajas):
-                print(f"  - Caja: '{c['nombre']}' (Destino: {c['camion']})")
+        
+            limpiar_pantalla()
+            print(Fore.CYAN + '--- ESTADO DEL SISTEMA ---')
+            print(Fore.YELLOW +'Cajas apiladas (Cima -> Base):')
+            if not lista_cajas:
+                print(Fore.YELLOW +'  [Almacén vacío]')
+            else:
+                for c in reversed(lista_cajas):
+                    print(Fore.WHITE + f"  - Caja: '{c['nombre']}' (Destino: {c['camion']})")
 
-        print('Fila de camiones (Frente -> Fin):', lista_camiones)
-        print('\n')
+            if not lista_camiones:
+                print(Fore.YELLOW + 'Fila de camiones (Frente -> Fin):', lista_camiones)
+                print(Fore.YELLOW +'  [Cola vacía]')
+            else:
+
+                print(Fore.YELLOW + 'Fila de camiones (Frente -> Fin):', lista_camiones)
+            input(Fore.GREEN + Style.DIM +'Presione Enter para volver a la pantalla principal')
+            limpiar_pantalla()
+                
+        
 
     while True:
         
-        print("==================================================")
-        print('SISTEMA DE DESPACHO Y ALMACÉN')
-        print("==================================================")
+        print(Fore.CYAN + "==================================================")
+        print(Fore.CYAN + '          SISTEMA DE DESPACHO Y ALMACÉN')
+        print(Fore.CYAN + "==================================================")
         print('1. Almacen de cajas (Apilar cajas)')
         print('2. Llegada de camion al almacen (Llega el camion a la fila)')
         print('3. Guardar cajas a transportar (Retirar caja de la cima)')
         print('4. Enviar camion (Despachar primer camion)')
         print('5. Ver estado del almacen y los camiones')
         print('6. Salir del programa')
-        print('--------------------------------------------------')
+        print(Fore.CYAN + '--------------------------------------------------')
         try:
-            select = int(input('Seleccione una opción (1-6): '))
+            select = int(input(Fore.YELLOW +'Seleccione una opción (1-6): '))
             match select:
                 case 1: almacenar_cajas_pila()
                 case 2: camion_cola()
@@ -187,14 +255,17 @@ def transporte_cajas():
                 case 4: despacho_camion()
                 case 5: estado_cajas_camiones()
                 case 6:
-                    print('Gracias por utilizar el programa. Hasta luego!')
+                    limpiar_pantalla()
+                    print(Fore.YELLOW + 'Gracias por utilizar el programa. Hasta luego!')
                     break
                 case _:
-                    print('Esa opción no se encuentra dentro del programa.\n')
+                    limpiar_pantalla()
+                    print(Fore.RED + 'Error. Esa opción no se encuentra dentro del programa.\n')
 
         except ValueError:
-            print('Ingrese un número válido que coincida con las opciones.\n')
+            limpiar_pantalla()
+            print(Fore.RED +'Error. Ingrese un número válido que coincida con las opciones.\n')
             continue
-        print('\n')
+        
 
-transporte_cajas()
+programa_transporte_cajas()
