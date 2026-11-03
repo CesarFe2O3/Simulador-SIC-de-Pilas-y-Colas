@@ -29,6 +29,7 @@ class Queue:
 
 
 def programa_transporte_cajas():
+   
     
     cajas = Stack()
     lista_cajas = []  # Almacenará diccionarios con la info de cada caja (Base -> Cima)
@@ -224,16 +225,18 @@ def programa_transporte_cajas():
                     print(Fore.WHITE + f"  - Caja: '{c['nombre']}' (Destino: {c['camion']})")
 
             if not lista_camiones:
-                print(Fore.YELLOW + 'Fila de camiones (Frente -> Fin):', lista_camiones)
+                print(Fore.YELLOW + 'Fila de camiones (Frente -> Fin):')
                 print(Fore.YELLOW +'  [Cola vacía]')
             else:
-
-                print(Fore.YELLOW + 'Fila de camiones (Frente -> Fin):', lista_camiones)
+                print(Fore.YELLOW + 'Fila de camiones (Frente -> Fin):')
+                for c in lista_camiones:
+                    print(c,'----->','Cargamento: ',  despacho_cajas[lista_camiones.index(c)])
+                #print(Fore.YELLOW + 'Fila de camiones (Frente -> Fin):', lista_camiones)
             input(Fore.GREEN + Style.DIM +'Presione Enter para volver a la pantalla principal')
             limpiar_pantalla()
                 
         
-
+    limpiar_pantalla()
     while True:
         
         print(Fore.CYAN + "==================================================")
