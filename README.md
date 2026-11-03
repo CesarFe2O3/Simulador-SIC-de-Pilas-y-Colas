@@ -1,4 +1,4 @@
-# 📦🚚 Simulador CLI de Pilas y Colas: Almacén y Despacho de Camiones
+# 📦🚚 Gestor de Almacén y Despacho de Camiones
  
 Un simulador interactivo para la **línea de comandos**, con interfaz a color, que muestra de forma práctica cómo funcionan dos estructuras de datos fundamentales:
  
